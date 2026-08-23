@@ -26,6 +26,14 @@ studies skip.
 - Real SHAP analysis identifies **General Health, High Blood Pressure, Age, BMI, and High Cholesterol**
   as the top 5 predictors, consistent with prior literature (Rafie et al. 2025; Kutlu et al. 2024).
 
+### SHAP Feature Importance
+
+![SHAP summary plot showing feature impact on diabetes risk](figures/shap_summary.png)
+
+### Calibration: Raw vs. Sigmoid vs. Isotonic
+
+![Calibration comparison showing reliability curves before and after recalibration](figures/calibration_comparison.png)
+
 ## Dataset
 
 **CDC Diabetes Health Indicators** (derived from the 2015 BRFSS, cleaned version)
