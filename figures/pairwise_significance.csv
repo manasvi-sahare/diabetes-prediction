@@ -1,0 +1,5 @@
+Comparison,AUC_diff,CI_low,CI_high,Significant
+Logistic Regression vs Random Forest,-0.0042,-0.0056,-0.0025,True
+Logistic Regression vs XGBoost,-0.004,-0.0058,-0.0019,True
+Random Forest vs XGBoost,0.0002,-0.0013,0.0017,False
+XGBoost vs XGBoost (calibrated),0.0004,-0.0006,0.0014,False

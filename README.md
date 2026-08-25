@@ -18,13 +18,25 @@ studies skip.
 *Confirmed reproducible: identical to 4 decimal places across two independent full pipeline runs.*
 
 **Headline findings:**
-- All three models converge tightly on ROC-AUC (~0.82) — **algorithm choice matters far less than
-  threshold tuning and calibration** on this dataset.
+- **Ensemble methods significantly outperform the linear baseline** — Random Forest and XGBoost both
+  beat Logistic Regression by a real, statistically significant margin (bootstrap 95% CI excludes 0:
+  RF vs. LR = +0.0042 AUC [0.0025, 0.0056]; XGBoost vs. LR = +0.0040 AUC [0.0019, 0.0058]).
+- **But Random Forest and XGBoost are statistically indistinguishable from each other**
+  (+0.0002 AUC, 95% CI [−0.0013, +0.0017], includes 0) — so *which* ensemble method you pick barely
+  matters, even though moving from linear to ensemble does.
+- **Calibration doesn't hurt ranking ability.** XGBoost vs. its Platt/isotonic-calibrated version shows
+  no significant AUC difference (+0.0004, CI includes 0) — as expected, since calibration is a
+  monotonic transform. You get the 43% Brier Score improvement "for free," without sacrificing
+  discrimination.
 - Raw XGBoost (trained with imbalance correction) is **badly over-confident**: at a predicted
-  probability of ~0.62, the true observed rate is only ~0.21. Platt scaling cuts the Brier Score by
-  43% and brings predicted/observed probabilities into close agreement.
+  probability of ~0.62, the true observed rate is only ~0.21. Calibration brings predicted/observed
+  probabilities into close agreement.
 - Real SHAP analysis identifies **General Health, High Blood Pressure, Age, BMI, and High Cholesterol**
   as the top 5 predictors, consistent with prior literature (Rafie et al. 2025; Kutlu et al. 2024).
+
+*Statistical rigor: all significance claims based on 1,000-resample paired bootstrap (95% CI) on the
+held-out test set, cross-validated against independent stratified 5-fold CV (see `figures/cv_all_models_summary.csv`
+and `figures/pairwise_significance.csv`).*
 
 ### SHAP Feature Importance
 
@@ -73,7 +85,9 @@ diabetes-prediction/
 ├── 10_threshold_tuning.py              # precision/recall/F1 vs. decision threshold
 ├── 11_shap_explainability.py           # SHAP analysis (global importance + summary plot)
 ├── 12_shap_local_example.py            # per-patient SHAP waterfall explanation
-└── 13_final_summary.py                 # consolidated results table across all models
+├── 13_final_summary.py                 # consolidated results table across all models
+├── 14_statistical_significance.py      # bootstrap 95% CIs + pairwise significance tests
+└── 15_cv_all_models.py                 # independent 5-fold CV spread for LR, RF, XGBoost
 ```
 
 
@@ -102,6 +116,8 @@ python 10_threshold_tuning.py
 python 11_shap_explainability.py
 python 12_shap_local_example.py
 python 13_final_summary.py
+python 14_statistical_significance.py
+python 15_cv_all_models.py
 ```
 
 Each script saves its trained model/artifacts to `models/` and any figures/tables to `figures/`, so
@@ -124,6 +140,14 @@ later scripts can reuse earlier outputs without recomputing from scratch.
    output to find the F1-optimal cutoff (0.245) and a high-recall operating point (0.160, ~75% recall).
 6. **Explainability** — SHAP `TreeExplainer` on XGBoost (3,000-case test sample), both global (summary
    plot, mean |SHAP|) and local (single-patient waterfall) explanations.
+7. **Statistical significance** — 1,000-resample paired bootstrap on the test set for 95% confidence
+   intervals on ROC-AUC and Brier Score; pairwise comparisons test whether observed differences
+   between models are distinguishable from noise, cross-validated against independent stratified
+   5-fold CV spreads for all three base models.
+
+### ROC-AUC with 95% Bootstrap Confidence Intervals
+
+![ROC-AUC confidence intervals across all models](figures/bootstrap_ci_plot.png)
 
 ## Known Issues / Open Items
 
@@ -134,6 +158,9 @@ later scripts can reuse earlier outputs without recomputing from scratch.
   through `13`) run cleanly in sequence with no import/path errors.
 - [ ] Consolidate output folders: `08`, `09`, `10` currently save to `outputs/` while `11`, `12`, `13`
   save to `figures/` — merge into a single `figures/` folder for consistency.
+- [x] ~~Add statistical significance testing~~ — resolved: bootstrap 95% CIs + pairwise significance
+  tests (`14_statistical_significance.py`) confirm ensemble methods significantly outperform Logistic
+  Regression, but Random Forest and XGBoost are statistically indistinguishable from each other.
 - [ ] Add a dedicated `01_download_data.py` for full one-command reproducibility
 - [ ] LightGBM was discussed but not yet trained/evaluated
 - [ ] Consider a subgroup calibration check (e.g. by Sex or Age) for a fairness angle

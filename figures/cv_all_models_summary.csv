@@ -1,0 +1,4 @@
+Model,CV_AUC_mean,CV_AUC_std,CV_Brier_mean,CV_Brier_std
+Logistic Regression,0.8233,0.0014,0.1766,0.0007
+Random Forest,0.8282,0.0021,0.1726,0.0005
+XGBoost,0.8263,0.0022,0.1698,0.0007
