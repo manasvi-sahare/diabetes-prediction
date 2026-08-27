@@ -14,6 +14,7 @@ model_files = {
     "XGBoost": ("models/xgboost.pkl", False, 0.5),
     "XGBoost (calibrated, thresh=0.5)": ("models/xgboost_calibrated.pkl", False, 0.5),
     "XGBoost (calibrated, tuned thresh=0.245)": ("models/xgboost_calibrated.pkl", False, 0.245),
+    "LightGBM": ("models/lgbm.pkl", False, 0.5),
 }
 
 for name, (path, needs_scaling, threshold) in model_files.items():

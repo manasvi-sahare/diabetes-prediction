@@ -11,6 +11,7 @@ models = {
     "Random Forest": (joblib.load("models/random_forest.pkl"), False),
     "XGBoost": (joblib.load("models/xgboost.pkl"), False),
     "XGBoost (calibrated)": (joblib.load("models/xgboost_calibrated.pkl"), False),
+    "LightGBM": (joblib.load("models/lgbm.pkl"), False),
 }
 
 N_BOOTSTRAP = 1000
@@ -70,6 +71,8 @@ pairs = [
     ("Logistic Regression", "XGBoost"),
     ("Random Forest", "XGBoost"),
     ("XGBoost", "XGBoost (calibrated)"),
+    ("XGBoost", "LightGBM"),
+    ("Random Forest", "LightGBM"),
 ]
 pairwise_results = []
 for a, b in pairs:

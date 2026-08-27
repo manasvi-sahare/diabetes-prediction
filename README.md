@@ -12,22 +12,28 @@ studies skip.
 | Logistic Regression | 0.8196 | 0.4413 | 0.1776 | Interpretable baseline |
 | Random Forest | 0.8238 | 0.4415 | 0.1738 | Regularized: `max_depth=12`, `min_samples_leaf=20` |
 | XGBoost | 0.8236 | 0.4422 | 0.1714 | `scale_pos_weight=6.177` for imbalance |
+| LightGBM | **0.8254** | 0.4415 | 0.1734 | Highest raw ROC-AUC and PR-AUC of any model tested |
 | XGBoost (calibrated, isotonic) | 0.8232 | 0.2162 @ thresh=0.5 | **0.0981** | Best of sigmoid vs. isotonic (near-tied) |
 | XGBoost (calibrated, tuned threshold=0.245) | 0.8232 | **0.4652** | 0.0981 | Best F1 of any configuration |
 
 *Confirmed reproducible: identical to 4 decimal places across two independent full pipeline runs.*
 
 **Headline findings:**
-- **Ensemble methods significantly outperform the linear baseline** — Random Forest and XGBoost both
-  beat Logistic Regression by a real, statistically significant margin (bootstrap 95% CI excludes 0:
-  RF vs. LR = +0.0042 AUC [0.0025, 0.0056]; XGBoost vs. LR = +0.0040 AUC [0.0019, 0.0058]).
-- **But Random Forest and XGBoost are statistically indistinguishable from each other**
-  (+0.0002 AUC, 95% CI [−0.0013, +0.0017], includes 0) — so *which* ensemble method you pick barely
-  matters, even though moving from linear to ensemble does.
-- **Calibration doesn't hurt ranking ability.** XGBoost vs. its Platt/isotonic-calibrated version shows
-  no significant AUC difference (+0.0004, CI includes 0) — as expected, since calibration is a
-  monotonic transform. You get the 43% Brier Score improvement "for free," without sacrificing
-  discrimination.
+- **Ensemble methods significantly outperform the linear baseline** — Random Forest, XGBoost, and
+  LightGBM all beat Logistic Regression by a real, statistically significant margin (bootstrap 95% CI
+  excludes 0: RF vs. LR = +0.0042 AUC [0.0025, 0.0056]; XGBoost vs. LR = +0.0040 AUC [0.0019, 0.0058]).
+- **Random Forest and XGBoost are statistically indistinguishable from each other**
+  (+0.0002 AUC, 95% CI [-0.0013, +0.0017], includes 0).
+- **LightGBM has a small but statistically significant edge over both** (XGBoost vs. LightGBM:
+  -0.0018 AUC, 95% CI [-0.0026, -0.0009]; Random Forest vs. LightGBM: -0.0016 AUC, 95% CI
+  [-0.0028, -0.0004] — both exclude 0). This is a genuine, reproducible finding, but a useful
+  reminder that **statistical significance is not the same as practical significance**: with a
+  50,736-case test set, the bootstrap is sensitive enough to detect a ~0.002 AUC difference, which is
+  far below any threshold that would change a real-world screening decision. LightGBM's histogram-based
+  leaf-wise growth gives it a measurable but clinically negligible edge on this dataset.
+- **Calibration doesn't hurt ranking ability.** XGBoost vs. its calibrated version shows no
+  significant AUC difference (+0.0004, CI includes 0) — as expected, since calibration is a monotonic
+  transform. You get the 43% Brier Score improvement "for free," without sacrificing discrimination.
 - Raw XGBoost (trained with imbalance correction) is **badly over-confident**: at a predicted
   probability of ~0.62, the true observed rate is only ~0.21. Calibration brings predicted/observed
   probabilities into close agreement.
@@ -88,7 +94,8 @@ diabetes-prediction/
 ├── 13_final_summary.py                 # consolidated results table across all models
 ├── 14_statistical_significance.py      # bootstrap 95% CIs + pairwise significance tests
 ├── 15_cv_all_models.py                 # independent 5-fold CV spread for LR, RF, XGBoost
-└── 16_subgroup_fairness.py             # calibration/AUC breakdown by Sex, Age, Income
+├── 16_subgroup_fairness.py             # calibration/AUC breakdown by Sex, Age, Income
+└── 17_train_lgbm.py                    # LightGBM (closes the "not yet trained" open item)
 ```
 
 
@@ -120,6 +127,7 @@ python 13_final_summary.py
 python 14_statistical_significance.py
 python 15_cv_all_models.py
 python 16_subgroup_fairness.py
+python 17_train_lgbm.py
 ```
 
 Each script saves its trained model/artifacts to `models/` and any figures/tables to `figures/`, so
@@ -202,7 +210,9 @@ results reveal real, non-trivial disparities:
   the diabetes prevalence but worse model calibration) — see Subgroup Fairness section above.
 - [ ] Investigate per-subgroup threshold tuning to fix the low-recall issue for ages 18-39
 - [ ] Add a dedicated `01_download_data.py` for full one-command reproducibility
-- [ ] LightGBM was discussed but not yet trained/evaluated
+- [x] ~~LightGBM was discussed but not yet trained/evaluated~~ — resolved: `17_train_lgbm.py` trained
+  and bootstrap-tested; LightGBM has the highest raw ROC-AUC (0.8254) of any model, a statistically
+  significant (but practically negligible, ~0.002 AUC) edge over Random Forest and XGBoost.
 
 ## License / Data Attribution
 
