@@ -87,7 +87,8 @@ diabetes-prediction/
 ├── 12_shap_local_example.py            # per-patient SHAP waterfall explanation
 ├── 13_final_summary.py                 # consolidated results table across all models
 ├── 14_statistical_significance.py      # bootstrap 95% CIs + pairwise significance tests
-└── 15_cv_all_models.py                 # independent 5-fold CV spread for LR, RF, XGBoost
+├── 15_cv_all_models.py                 # independent 5-fold CV spread for LR, RF, XGBoost
+└── 16_subgroup_fairness.py             # calibration/AUC breakdown by Sex, Age, Income
 ```
 
 
@@ -118,6 +119,7 @@ python 12_shap_local_example.py
 python 13_final_summary.py
 python 14_statistical_significance.py
 python 15_cv_all_models.py
+python 16_subgroup_fairness.py
 ```
 
 Each script saves its trained model/artifacts to `models/` and any figures/tables to `figures/`, so
@@ -149,6 +151,40 @@ later scripts can reuse earlier outputs without recomputing from scratch.
 
 ![ROC-AUC confidence intervals across all models](figures/bootstrap_ci_plot.png)
 
+## Subgroup Fairness & Calibration Analysis
+
+None of the six papers reviewed in this proposal's literature review tested whether performance and
+calibration hold up **across demographic subgroups** — so this pipeline includes that check. The
+results reveal real, non-trivial disparities:
+
+| Group | Subgroup | N | Prevalence | ROC-AUC | Brier (calibrated) | Recall (tuned thresh) |
+|---|---|---|---|---|---|---|
+| Sex | Female | 28,531 | 12.9% | 0.8334 | 0.0912 | 0.594 |
+| Sex | Male | 22,205 | 15.2% | 0.8093 | 0.1069 | 0.607 |
+| Age | 18-39 | 7,749 | 3.3% | 0.8367 | 0.0282 | **0.194** |
+| Age | 40-59 | 18,361 | 10.6% | 0.8316 | 0.0783 | 0.528 |
+| Age | 60+ | 24,626 | 19.7% | **0.7698** | **0.1348** | 0.651 |
+| Income | Lower (1-4) | 11,418 | 22.7% | 0.7812 | 0.1455 | 0.731 |
+| Income | Higher (5-8) | 39,318 | 11.4% | 0.8244 | 0.0843 | 0.525 |
+
+**Key fairness findings:**
+- **Discrimination and calibration both degrade with age.** ROC-AUC drops from 0.837 (18-39) to 0.770
+  (60+), and Brier Score nearly quintuples (0.028 -> 0.135) over the same range.
+- **The globally-tuned threshold badly under-serves young adults.** Recall for ages 18-39 is only
+  0.194 at the threshold tuned on the full population (0.245) — not a discrimination failure (this
+  group has the *best* AUC of any age bucket) but a threshold-calibration failure, since diabetes
+  prevalence in this group (3.3%) is far below the population average (13.9%) the threshold was tuned
+  against. Per-subgroup threshold tuning is a clear, actionable fix.
+- **A real equity concern in income:** lower-income individuals have nearly double the diabetes
+  prevalence of higher-income individuals (22.7% vs. 11.4%) — meaning they need the model to work well
+  *more* — but the model both discriminates (AUC 0.781 vs. 0.824) and calibrates (Brier 0.146 vs.
+  0.084) worse for this group.
+- Sex shows a smaller but real gap (AUC 0.809 Male vs. 0.833 Female).
+
+### Calibration by Sex
+
+![Calibration curve comparison between Male and Female subgroups](figures/subgroup_calibration_by_sex.png)
+
 ## Known Issues / Open Items
 
 - [x] ~~Consolidate `09_shap_explain.py` and `12_shap_explainability.py`~~ — resolved: removed the
@@ -161,9 +197,12 @@ later scripts can reuse earlier outputs without recomputing from scratch.
 - [x] ~~Add statistical significance testing~~ — resolved: bootstrap 95% CIs + pairwise significance
   tests (`14_statistical_significance.py`) confirm ensemble methods significantly outperform Logistic
   Regression, but Random Forest and XGBoost are statistically indistinguishable from each other.
+- [x] ~~Consider a subgroup calibration check~~ — resolved: `16_subgroup_fairness.py` found real
+  disparities by Age (AUC 0.837 for 18-39 vs. 0.770 for 60+) and Income (lower-income group has 2x
+  the diabetes prevalence but worse model calibration) — see Subgroup Fairness section above.
+- [ ] Investigate per-subgroup threshold tuning to fix the low-recall issue for ages 18-39
 - [ ] Add a dedicated `01_download_data.py` for full one-command reproducibility
 - [ ] LightGBM was discussed but not yet trained/evaluated
-- [ ] Consider a subgroup calibration check (e.g. by Sex or Age) for a fairness angle
 
 ## License / Data Attribution
 
