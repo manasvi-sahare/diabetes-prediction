@@ -1,9 +1,8 @@
 # Explainable & Calibrated ML for Diabetes Risk Prediction
 
 A reproducible machine learning pipeline for diabetes risk classification on the CDC Diabetes Health
-Indicators dataset (BRFSS 2015), comparing Logistic Regression, Random Forest, and XGBoost, with a
-focus on **probability calibration** and **SHAP explainability** — two aspects most diabetes-prediction
-studies skip.
+Indicators dataset (BRFSS 2015), comparing Logistic Regression, Random Forest, and XGBoost, with particular emphasis on probability calibration and SHAP-based interpretability, which are less
+commonly evaluated alongside discrimination and subgroup analysis in comparable diabetes-risk studies.
 
 ## Key Real Findings
 
@@ -15,6 +14,9 @@ studies skip.
 | LightGBM | **0.8254** | 0.4415 | 0.1734 | Highest raw ROC-AUC and PR-AUC of any model tested |
 | XGBoost (calibrated, isotonic) | 0.8232 | 0.2162 @ thresh=0.5 | **0.0981** | Best of sigmoid vs. isotonic (near-tied) |
 | XGBoost (calibrated, tuned threshold=0.245) | 0.8232 | **0.4652** | 0.0981 | Best F1 of any configuration |
+
+Note: this analysis reports subgroup performance and calibration differences, not a formal fairness
+audit. It does not test against defined fairness criteria (e.g. demographic parity, equalized odds).
 
 *Confirmed reproducible: identical to 4 decimal places across two independent full pipeline runs.*
 
@@ -159,7 +161,7 @@ later scripts can reuse earlier outputs without recomputing from scratch.
 
 ![ROC-AUC confidence intervals across all models](figures/bootstrap_ci_plot.png)
 
-## Subgroup Fairness & Calibration Analysis
+## Subgroup Performance & Calibration Analysis
 
 None of the six papers reviewed in this proposal's literature review tested whether performance and
 calibration hold up **across demographic subgroups** — so this pipeline includes that check. The
@@ -175,7 +177,7 @@ results reveal real, non-trivial disparities:
 | Income | Lower (1-4) | 11,418 | 22.7% | 0.7812 | 0.1455 | 0.731 |
 | Income | Higher (5-8) | 39,318 | 11.4% | 0.8244 | 0.0843 | 0.525 |
 
-**Key fairness findings:**
+**Key subgroup findings:**
 - **Discrimination and calibration both degrade with age.** ROC-AUC drops from 0.837 (18-39) to 0.770
   (60+), and Brier Score nearly quintuples (0.028 -> 0.135) over the same range.
 - **The globally-tuned threshold badly under-serves young adults.** Recall for ages 18-39 is only
@@ -183,7 +185,7 @@ results reveal real, non-trivial disparities:
   group has the *best* AUC of any age bucket) but a threshold-calibration failure, since diabetes
   prevalence in this group (3.3%) is far below the population average (13.9%) the threshold was tuned
   against. Per-subgroup threshold tuning is a clear, actionable fix.
-- **A real equity concern in income:** lower-income individuals have nearly double the diabetes
+- **A notable disparity in income:** lower-income individuals have nearly double the diabetes
   prevalence of higher-income individuals (22.7% vs. 11.4%) — meaning they need the model to work well
   *more* — but the model both discriminates (AUC 0.781 vs. 0.824) and calibrates (Brier 0.146 vs.
   0.084) worse for this group.
@@ -207,7 +209,8 @@ results reveal real, non-trivial disparities:
   Regression, but Random Forest and XGBoost are statistically indistinguishable from each other.
 - [x] ~~Consider a subgroup calibration check~~ — resolved: `16_subgroup_fairness.py` found real
   disparities by Age (AUC 0.837 for 18-39 vs. 0.770 for 60+) and Income (lower-income group has 2x
-  the diabetes prevalence but worse model calibration) — see Subgroup Fairness section above.
+  the diabetes prevalence but worse model calibration) — see Subgroup Performance & Calibration
+  Analysis section above.
 - [ ] Investigate per-subgroup threshold tuning to fix the low-recall issue for ages 18-39
 - [ ] Add a dedicated `01_download_data.py` for full one-command reproducibility
 - [x] ~~LightGBM was discussed but not yet trained/evaluated~~ — resolved: `17_train_lgbm.py` trained
