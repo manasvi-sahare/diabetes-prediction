@@ -1,0 +1,2 @@
+mean_spearman_rho,std_spearman_rho,top5_jaccard_mean,top10_jaccard_mean,n_features_always_in_top10
+0.9948,0.0008,1.0,0.8909,9
