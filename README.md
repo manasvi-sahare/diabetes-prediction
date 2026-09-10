@@ -1,5 +1,7 @@
 # Explainable & Calibrated ML for Diabetes Risk Prediction
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/manasvi-sahare/diabetes-prediction/blob/main/diabetes_prediction_pipeline.ipynb)
+
 A reproducible machine learning pipeline for diabetes risk classification on the CDC Diabetes Health
 Indicators dataset (BRFSS 2015), comparing Logistic Regression, Random Forest, and XGBoost, with particular emphasis on probability calibration and SHAP-based interpretability, which are less
 commonly evaluated alongside discrimination and subgroup analysis in comparable diabetes-risk studies.
