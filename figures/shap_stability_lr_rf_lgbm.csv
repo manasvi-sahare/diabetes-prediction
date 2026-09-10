@@ -1,0 +1,4 @@
+Model,mean_spearman_rho,top5_jaccard,top10_jaccard
+Logistic Regression,0.9853,1.0,0.9273
+Random Forest,0.9957,1.0,1.0
+LightGBM,0.9905,1.0,1.0
