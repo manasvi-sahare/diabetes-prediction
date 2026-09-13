@@ -22,6 +22,16 @@ audit. It does not test against defined fairness criteria (e.g. demographic pari
 
 *Confirmed reproducible: identical to 4 decimal places across two independent full pipeline runs.*
 
+### Cross-Environment Reproducibility Note
+
+This pipeline was independently verified in two environments: a local Windows/venv setup and Google
+Colab. Minor numerical drift (typically <0.002 in AUC/rho, concentrated in Random Forest and the
+calibrated model) was observed between environments, attributable to differing library versions
+rather than methodological inconsistency. All qualitative findings -- including the threshold-optimum
+location (0.20-0.25), subgroup gap direction and magnitude, and relative model rankings -- are
+identical across both environments. Exact pinned versions for each environment are available in
+`requirements-exact.txt` (local) and printed at the top of the Colab notebook (Step 0).
+
 **Headline findings:**
 - **Ensemble methods significantly outperform the linear baseline** — Random Forest, XGBoost, and
   LightGBM all beat Logistic Regression by a real, statistically significant margin (bootstrap 95% CI
