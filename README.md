@@ -55,7 +55,7 @@ curl -L -o data/diabetes.csv "https://raw.githubusercontent.com/Helmy2/Diabetes-
 - `figures/old/` superseded outputs from earlier versions of the pipeline, kept for reference
   (including `full_data_weighted/`, the class-weighted run on the deduplicated data)
 - `archive/` earlier exploratory scripts, kept for reference only
-- `notebooks/` Colab notebook, not yet rebuilt to match `src/`
+- `diabetes_prediction_pipeline.ipynb` Colab notebook from an earlier version of the pipeline (not yet rebuilt to match `src/`; do not use it to reproduce the current results)
 
 ## Status and limitations
 Work in progress. Results are from one survey, with a self-reported combined
