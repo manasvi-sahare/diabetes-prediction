@@ -1,0 +1,22 @@
+grouping,strategy,group,threshold,recall,precision,flag_rate
+Age,global,18-39,0.235,0.2119,0.3049,0.0234
+Age,global,40-59,0.235,0.5455,0.3888,0.1756
+Age,global,60+,0.235,0.6859,0.3756,0.3824
+Age,group_F1,18-39,0.135,0.3941,0.2225,0.0596
+Age,group_F1,40-59,0.225,0.5629,0.3779,0.1864
+Age,group_F1,60+,0.255,0.6425,0.3907,0.3444
+Age,equal_recall,18-39,0.0439,0.6695,0.1138,0.1981
+Age,equal_recall,40-59,0.1818,0.6525,0.343,0.2381
+Age,equal_recall,60+,0.2633,0.6212,0.3971,0.3277
+Income,global,Lower (1-4),0.235,0.7472,0.4021,0.4316
+Income,global,Higher (5-8),0.235,0.557,0.3599,0.1955
+Income,group_F1,Lower (1-4),0.275,0.6781,0.4306,0.3658
+Income,group_F1,Higher (5-8),0.235,0.557,0.3599,0.1955
+Income,equal_recall,Lower (1-4),0.2999,0.6247,0.4431,0.3276
+Income,equal_recall,Higher (5-8),0.2037,0.6326,0.3334,0.2396
+Sex,global,Female,0.235,0.6286,0.3816,0.234
+Sex,global,Male,0.235,0.6306,0.374,0.2809
+Sex,group_F1,Female,0.235,0.6286,0.3816,0.234
+Sex,group_F1,Male,0.26,0.5778,0.3912,0.246
+Sex,equal_recall,Female,0.234,0.6308,0.3806,0.2354
+Sex,equal_recall,Male,0.2354,0.63,0.3745,0.2802

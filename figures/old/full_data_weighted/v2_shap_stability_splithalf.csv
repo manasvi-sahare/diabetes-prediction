@@ -1,0 +1,5 @@
+model,rho,top5_jaccard,top10_jaccard
+LR,0.9766,1.0,1.0
+XGB,0.9857,1.0,1.0
+LGBM,0.9805,1.0,1.0
+RF,0.9909,1.0,1.0

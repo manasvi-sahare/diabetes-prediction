@@ -1,0 +1,7 @@
+pair,rho,top5_jaccard,top10_jaccard
+LR vs XGB,0.9221,1.0,0.8182
+LR vs LGBM,0.8935,1.0,0.8182
+LR vs RF,0.9052,1.0,0.6667
+XGB vs LGBM,0.974,1.0,1.0
+XGB vs RF,0.9091,1.0,0.6667
+LGBM vs RF,0.8429,1.0,0.6667

@@ -1,0 +1,8 @@
+comparison,dAUC,CI95_lo,CI95_hi,CIadj_lo,CIadj_hi,significant_adj,practically_equivalent
+LR - RF,-0.0059,-0.0076,-0.0043,-0.008,-0.0035,True,False
+LR - XGB,-0.0047,-0.0069,-0.0026,-0.0077,-0.0018,True,False
+LR - LGBM,-0.0061,-0.0082,-0.0041,-0.0088,-0.0035,True,False
+RF - XGB,0.0012,-0.0005,0.0029,-0.001,0.0035,False,True
+RF - LGBM,-0.0002,-0.0018,0.0013,-0.0022,0.002,False,True
+XGB - LGBM,-0.0014,-0.0023,-0.0005,-0.0026,-0.0002,True,True
+XGB - XGB_cal,0.0,-0.0,0.0,-0.0,0.0,False,True

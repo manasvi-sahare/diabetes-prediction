@@ -1,0 +1,10 @@
+contrast,estimate,lo,hi,excludes_null
+ECE ratio: Lower / Higher income,1.3423,1.0575,2.8751,True
+ECE diff:  Lower - Higher income,0.0019,0.0005,0.0101,True
+O/E diff:  Lower - Higher income,0.0522,0.0079,0.0875,True
+AUC diff:  Lower - Higher income,-0.0399,-0.0514,-0.0276,True
+AUC diff:  18-39 - 60+,0.0622,0.0349,0.0904,True
+ECE diff:  60+ - 40-59,-0.001,-0.0051,0.0043,False
+BSS diff:  60+ - 18-39,0.0503,0.0114,0.0836,True
+AUC diff:  Female - Male,0.0263,0.0163,0.0366,True
+ECE diff:  Male - Female,-0.0,-0.0041,0.0041,False
