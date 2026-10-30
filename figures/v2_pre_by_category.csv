@@ -1,0 +1,4 @@
+category,n,mean_predicted_risk,flagged
+No diabetes,38038,0.1245,0.1807
+Prediabetes,838,0.2385,0.4785
+Diabetes,7019,0.3118,0.6296

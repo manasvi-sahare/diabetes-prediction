@@ -1,0 +1,5 @@
+comparison,AUC,lo,hi
+Diabetes vs no diabetes,0.8193,0.8146,0.8242
+Prediabetes vs no diabetes,0.7434,0.7297,0.7572
+Diabetes vs prediabetes,0.6228,0.6048,0.6403
+Diabetes vs all others (paper AUC),0.8151,0.8103,0.8198

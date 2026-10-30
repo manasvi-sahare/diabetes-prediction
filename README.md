@@ -5,9 +5,10 @@ LightGBM on the CDC Diabetes Health Indicators data (BRFSS, as distributed by UC
 with calibration, bootstrap significance testing, subgroup analysis, operating-point
 analysis and SHAP stability.
 
-**Target:** `Diabetes_binary` (0 = no diabetes, 1 = prediabetes or diabetes; self-reported).
-The positive class combines two conditions, so the models predict a self-reported
-diagnosis, not laboratory-confirmed disease.
+**Target:** `Diabetes_binary` (1 = self-reported diagnosed diabetes; 0 = otherwise).
+In the file used here, respondents with prediabetes (4,631) are coded 0, verified by
+cross-tabulation against the three-class version of the data. The UCI documentation
+describes the positive class as including prediabetes, which does not match this file.
 
 ## Protocol
 - 24,206 exact duplicate rows removed before splitting (229,474 records remain)
@@ -60,8 +61,7 @@ curl -L -o data/diabetes.csv "https://raw.githubusercontent.com/Helmy2/Diabetes-
 ## Status and limitations
 Work in progress. Results are from one survey, with a self-reported combined
 prediabetes/diabetes label, ignoring survey weights, and have not been externally
-validated. Cross-environment reproducibility has not been re-checked since the pipeline
-was rewritten.
+validated. With a self-reported diabetes label that codes prediabetes as negative.
 
 ## License / Data Attribution
 Dataset: CDC Diabetes Health Indicators, UCI Machine Learning Repository,
