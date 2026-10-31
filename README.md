@@ -59,9 +59,10 @@ curl -L -o data/diabetes.csv "https://raw.githubusercontent.com/Helmy2/Diabetes-
 - `diabetes_prediction_pipeline.ipynb` Colab notebook from an earlier version of the pipeline (not yet rebuilt to match `src/`; do not use it to reproduce the current results)
 
 ## Status and limitations
-Work in progress. Results are from one survey, with a self-reported combined
-prediabetes/diabetes label, ignoring survey weights, and have not been externally
-validated. With a self-reported diabetes label that codes prediabetes as negative.
+Work in progress. Results are from one survey, with a self-reported diabetes label
+that codes prediabetes as negative, ignoring survey weights, and have not been
+externally validated. Cross-environment reproducibility has not been re-checked since
+the pipeline was rewritten.
 
 ## License / Data Attribution
 Dataset: CDC Diabetes Health Indicators, UCI Machine Learning Repository,
