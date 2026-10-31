@@ -30,7 +30,11 @@ describes the positive class as including prediabetes, which does not match this
   AUC is 0.062 lower for ages 60+ than 18-39, 0.026 lower for men than women and
   0.040 lower for lower-income respondents.
 - One population-wide threshold gives very different recall by group (age gap 0.47,
-  income gap 0.19). Equalising recall costs about 0.022 F1 for age and 0.008 for income.
+  income gap 0.19). Group-specific F1 thresholds narrow the gaps without a detectable
+  loss of F1 but do not close them. Equal-recall thresholds close them, at a cost of
+  about 0.022 F1 for age and 0.008 for income (paired bootstrap).
+- Respondents with prediabetes (coded negative) receive intermediate risk scores, but
+  excluding them leaves the subgroup AUC gaps essentially unchanged.
 - SHAP rankings are stable under retraining (mean Spearman rho >= 0.967), and the same
   five features lead every model: GenHlth, HighBP, Age, BMI, HighChol.
 
@@ -41,14 +45,20 @@ python src/significance.py        # bootstrap CIs, pairwise tests, 5-fold CV
 python src/subgroups.py           # subgroup metrics, contrasts, group-wise recalibration
 python src/shap_stability.py      # SHAP stability (slow; cached in cache/)
 python src/operating_points.py    # threshold strategies, decision curves
+python src/strategy_tests.py      # paired tests between threshold strategies
 python src/figures.py             # figures
 python src/data_checks.py         # duplicate and leakage diagnostics
+python src/prediabetes.py         # prediabetes label breakdown (needs data/diabetes_012.csv)
 ```
 
 Download the data first:
 ```
 curl -L -o data/diabetes.csv "https://raw.githubusercontent.com/Helmy2/Diabetes-Health-Indicators/main/diabetes_binary_health_indicators_BRFSS2015.csv"
 ```
+
+The prediabetes analysis also needs the three-class file. Download it with
+`python src/get_012.py` (requires `pip install kagglehub`), which saves
+`data/diabetes_012.csv`, then check row alignment with `python src/check_012.py`.
 
 ## Layout
 - `src/` current analysis scripts
