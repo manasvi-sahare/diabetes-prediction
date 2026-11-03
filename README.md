@@ -12,29 +12,37 @@ describes the positive class as including prediabetes, which does not match this
 
 ## Protocol
 - 24,206 exact duplicate rows removed before splitting (229,474 records remain)
-- Stratified 60/20/20 train / validation / test split (seed 42)
+- Stratified 60/20/20 train / validation / test split (primary split: seed 42)
 - Calibrator (Platt or isotonic) and decision threshold chosen on validation data only
 - Test set used for reporting only
+- Key results repeated on ten further random splits (seeds 101-110)
 - Subgroup analysis by sex, age (18-39, 40-59, 60+) and income (levels 1-4, 5-8). This is a
-  performance and calibration comparison, not a formal fairness audit: no fairness
-  criterion such as demographic parity or equalised odds is tested.
+  performance and calibration comparison, not a formal fairness audit. The only
+  fairness-related criterion examined is recall parity at a threshold (equality of
+  opportunity); demographic parity and full equalised odds are not tested.
 
-## Main findings (test set, unweighted models)
+## Main findings (primary split, unweighted models)
 - Ensembles beat logistic regression by about 0.005-0.006 AUC (Bonferroni-adjusted paired
   bootstrap): reliable but small. Ensembles are practically equivalent to each other
-  (differences of at most 0.0014 AUC).
+  (differences of at most 0.0014 AUC). Ensembles beat logistic regression in all ten
+  repeated splits.
 - Unweighted models are already well calibrated (ECE 0.004-0.015). Class weighting
   inflates predicted risk (calibration intercept about -1.6 to -1.7, ECE about 0.23) and
   gives no gain in AUC, Brier score or tuned F1 after recalibration.
-- Calibration holds across subgroups (ECE <= 0.008), but discrimination does not:
-  AUC is 0.062 lower for ages 60+ than 18-39, 0.026 lower for men than women and
-  0.040 lower for lower-income respondents.
+- Subgroup ECE is small (at most 0.008 in the primary split; the largest subgroup ECE over
+  ten splits ranged from 0.009 to 0.018), but discrimination differs: AUC is 0.062 lower
+  for ages 60+ than 18-39, 0.026 lower for men than women and 0.040 lower for
+  lower-income respondents.
 - One population-wide threshold gives very different recall by group (age gap 0.47,
-  income gap 0.19). Group-specific F1 thresholds narrow the gaps without a detectable
-  loss of F1 but do not close them. Equal-recall thresholds close them, at a cost of
-  about 0.022 F1 for age and 0.008 for income (paired bootstrap).
+  income gap 0.19; consistent in all ten splits). Group-specific F1 thresholds narrow the
+  gaps without a detectable loss of F1 but do not close them. Equal-recall thresholds close
+  them on average, at a cost of 0.022 F1 for age (0.016 on average over ten splits) and
+  0.008 for income.
 - Respondents with prediabetes (coded negative) receive intermediate risk scores, but
   excluding them leaves the subgroup AUC gaps essentially unchanged.
+- The AUC decline for older adults is concentrated above age 65 and is not removed by
+  age-specific models (configurations tested); this is consistent with limited
+  within-group signal in the available features, not proof of it.
 - SHAP rankings are stable under retraining (mean Spearman rho >= 0.967), and the same
   five features lead every model: GenHlth, HighBP, Age, BMI, HighChol.
 
@@ -49,6 +57,8 @@ python src/strategy_tests.py      # paired tests between threshold strategies
 python src/figures.py             # figures
 python src/data_checks.py         # duplicate and leakage diagnostics
 python src/prediabetes.py         # prediabetes label breakdown (needs data/diabetes_012.csv)
+python src/age_gap.py             # why discrimination is lower for older adults
+python src/repeated_splits.py     # key results over ten random splits
 ```
 
 Download the data first:
@@ -71,7 +81,9 @@ The prediabetes analysis also needs the three-class file. Download it with
 ## Status and limitations
 Work in progress. Results are from one survey, with a self-reported diabetes label
 that codes prediabetes as negative, ignoring survey weights, and have not been
-externally validated. Cross-environment reproducibility has not been re-checked since
+externally validated. Hyperparameters were not tuned. Repeated splits reuse the same
+records and fixed model seeds, so they show split-to-split variation, not full
+uncertainty. Cross-environment reproducibility has not been re-checked since
 the pipeline was rewritten.
 
 ## License / Data Attribution
