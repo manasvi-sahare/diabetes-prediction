@@ -1,0 +1,5 @@
+model,default_test_auc,tuned_test_auc,change
+LR,0.8103,0.8103,0.0
+RF,0.8163,0.8165,0.0002
+XGB,0.8151,0.8198,0.0047
+LGBM,0.8165,0.8195,0.003

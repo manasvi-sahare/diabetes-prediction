@@ -1,0 +1,5 @@
+model,default_val_auc,tuned_val_auc,tuned_is_default,params
+LR,0.8088,0.8088,False,{'logisticregression__C': 0.01}
+RF,0.8134,0.8139,False,"{'n_estimators': 300, 'min_samples_leaf': 20, 'max_features': 'sqrt', 'max_depth': 20}"
+XGB,0.8135,0.8172,False,"{'subsample': 1.0, 'reg_lambda': 5, 'n_estimators': 600, 'min_child_weight': 10, 'max_depth': 4, 'learning_rate': 0.03, 'colsample_bytree': 0.85}"
+LGBM,0.8149,0.8174,False,"{'subsample': 0.7, 'reg_lambda': 10, 'num_leaves': 31, 'n_estimators': 400, 'min_child_samples': 50, 'max_depth': 4, 'learning_rate': 0.05, 'colsample_bytree': 1.0}"
