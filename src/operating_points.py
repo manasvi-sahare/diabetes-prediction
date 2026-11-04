@@ -121,7 +121,7 @@ for ax, grouping in zip(axes, PT):
         y, p = yte[mt], p_te[mt]; prev = y.mean()
         ax.plot(pts, [net_benefit(y, p >= t, t) for t in pts], color=c, label=f"{g} model")
         ax.plot(pts, [prev - (1 - prev) * t / (1 - t) for t in pts], color=c, ls="--", lw=1, label=f"{g} treat all")
-    ax.axhline(0, color="k", lw=0.8); ax.set_ylim(-0.05, 0.25)
+    ax.axhline(0, color="k", lw=0.8); ax.set_ylim(-0.05, 0.25); ax.set_xlim(0, 0.4)
     ax.set_title(f"Decision curves by {grouping}"); ax.set_xlabel("Threshold probability")
 axes[0].set_ylabel("Net benefit"); axes[0].legend(fontsize=7)
 plt.tight_layout(); plt.savefig("figures/v2_fig_decision_curves.png", dpi=150); plt.close()

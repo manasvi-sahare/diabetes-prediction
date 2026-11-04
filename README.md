@@ -1,7 +1,7 @@
 # Calibrated and Explainable ML for Diabetes Risk Prediction
 
 Leakage-controlled comparison of logistic regression, random forest, XGBoost and
-LightGBM on the CDC Diabetes Health Indicators data (BRFSS, as distributed by UCI),
+LightGBM on the CDC Diabetes Health Indicators data (BRFSS, as circulated on Kaggle/GitHub),
 with calibration, bootstrap significance testing, subgroup analysis, operating-point
 analysis and SHAP stability.
 
@@ -22,9 +22,11 @@ describes the positive class as including prediabetes, which does not match this
   opportunity); demographic parity and full equalised odds are not tested.
 
 ## Main findings (primary split, unweighted models)
-- Ensembles beat logistic regression by about 0.005-0.006 AUC (Bonferroni-adjusted paired
-  bootstrap): reliable but small. Ensembles are practically equivalent to each other
-  (differences of at most 0.0014 AUC). Ensembles beat logistic regression in all ten
+- Ensembles beat logistic regression by about 0.005-0.006 AUC with default hyperparameters
+  (Bonferroni-adjusted paired bootstrap): reliable but small, and practically equivalent to
+  each other. After a small tuning search the boosted models led logistic regression by about
+  0.009-0.010 AUC (beyond the +/-0.005 margin); XGBoost and LightGBM stay equivalent, and
+  random forest trails them by about 0.003. Ensembles beat logistic regression in all ten
   repeated splits.
 - Unweighted models are already well calibrated (ECE 0.004-0.015). Class weighting
   inflates predicted risk (calibration intercept about -1.6 to -1.7, ECE about 0.23) and
@@ -59,6 +61,8 @@ python src/data_checks.py         # duplicate and leakage diagnostics
 python src/prediabetes.py         # prediabetes label breakdown (needs data/diabetes_012.csv)
 python src/age_gap.py             # why discrimination is lower for older adults
 python src/repeated_splits.py     # key results over ten random splits
+python src/tuning.py              # small hyperparameter search, sensitivity analysis
+python src/tuned_tests.py         # paired tests between tuned models
 ```
 
 Download the data first:

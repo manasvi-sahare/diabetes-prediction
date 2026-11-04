@@ -83,3 +83,33 @@ ax.set_ylabel("ROC-AUC"); ax.set_title("Age-stratified ROC-AUC, all models")
 plt.tight_layout(); plt.savefig("figures/v2_fig_age_gap.png", dpi=150); plt.close()
 
 print("\nSaved figures/v2_fig_*.png and v2_threshold_sweep.csv")
+
+# ===== axis fixes =====
+# (a) AUC with CIs: fixed axis from chance level
+ci = pd.read_csv("figures/v2_bootstrap_ci_summary.csv")
+fig, ax = plt.subplots(figsize=(7.5, 4.5))
+ax.errorbar(ci["model"], ci["AUC"], yerr=[ci["AUC"] - ci["AUC_lo"], ci["AUC_hi"] - ci["AUC"]],
+            fmt="o", capsize=5, color="#028090")
+ax.axhline(0.5, color="k", lw=0.8, ls="--"); ax.set_ylim(0.5, 1.0)
+ax.set_ylabel("ROC-AUC (axis starts at chance level, 0.5)"); ax.set_title("Test ROC-AUC, 95% bootstrap CI")
+plt.tight_layout(); plt.savefig("figures/v2_bootstrap_ci_plot.png", dpi=150); plt.close()
+
+# (b) AUC by age category
+ac = pd.read_csv("figures/v2_age_by_category.csv")
+fig, ax = plt.subplots(figsize=(7.5, 4.5))
+ax.errorbar(ac["age_category"], ac["AUC"], yerr=[ac["AUC"] - ac["lo"], ac["hi"] - ac["AUC"]],
+            fmt="o-", capsize=3, color="#028090")
+ax.axhline(0.5, color="k", lw=0.8, ls="--"); ax.set_ylim(0.5, 1.0); ax.set_xlim(0, 14)
+ax.set_xlabel("BRFSS age category (1 = 18-24, 13 = 80+)"); ax.set_ylabel("ROC-AUC (axis starts at 0.5)")
+plt.tight_layout(); plt.savefig("figures/v2_fig_age_categories.png", dpi=150); plt.close()
+
+# (c) Age gap: the gap itself, as bars from zero
+ag = pd.read_csv("figures/v2_age_gap_all_models.csv")
+g = ag["gap_18_39_minus_60"]
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+ax.bar(np.arange(len(ag)), g, yerr=[g - ag["gap_lo"], ag["gap_hi"] - g], capsize=5, color="#028090")
+ax.set_xticks(np.arange(len(ag))); ax.set_xticklabels(ag["model"])
+ax.set_ylim(0, 0.12); ax.set_ylabel("AUC gap: ages 18-39 minus 60+ (95% CI)")
+ax.set_title("Age gap in AUC, all models")
+plt.tight_layout(); plt.savefig("figures/v2_fig_age_gap.png", dpi=150); plt.close()
+print("axis-fixed figures saved")
