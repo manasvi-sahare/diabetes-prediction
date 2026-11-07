@@ -114,6 +114,7 @@ for ax, col in zip(axes, ("AUC", "ECE")):
 axes[0].axvline(0.5, color="k", lw=0.8, ls="--")
 axes[0].set_xlim(0, 1)
 axes[1].set_xlim(0, max(tab["ECE_hi"].max(), tab["ECE"].max()) * 1.15)  # never clips the CI
+axes[1].xaxis.set_major_locator(plt.MaxNLocator(4))   # few ticks so labels do not overlap
 axes[0].set_yticks(y); axes[0].set_yticklabels(tab["group"]); axes[0].invert_yaxis()
 save(fig, "v2_fig_subgroups.png")
 
@@ -138,3 +139,21 @@ axes[0].legend(fontsize=8, loc="upper left")
 save(fig, "v2_fig_calibration.png")
 
 print("figures saved")
+
+# 6. Subgroup calibration curves (calibrated unweighted XGBoost, test set), axes 0-1
+p_cal = S["plain"]["cal"]
+GR = {"Age": {"18-39": X_te["Age"].between(1, 4).values, "40-59": X_te["Age"].between(5, 8).values,
+               "60+": X_te["Age"].between(9, 13).values},
+      "Income": {"Lower (1-4)": X_te["Income"].between(1, 4).values,
+                 "Higher (5-8)": X_te["Income"].between(5, 8).values},
+      "Sex": {"Female": (X_te["Sex"] == 0).values, "Male": (X_te["Sex"] == 1).values}}
+fig, axes = plt.subplots(1, 3, figsize=(11, 3.9))
+for ax, (gname, grp) in zip(axes, GR.items()):
+    ax.plot([0, 1], [0, 1], "k--", lw=0.8)
+    for c, (lab, m) in zip((C2, C1, C3), grp.items()):
+        x_, y_ = curve(yte[m], p_cal[m], bins=10)
+        ax.plot(x_, y_, "o-", color=c, ms=3, label=lab)
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.set_aspect("equal")
+    ax.set_title(gname); ax.set_xlabel("Mean predicted probability"); ax.legend(fontsize=7)
+axes[0].set_ylabel("Observed frequency")
+plt.tight_layout(); plt.savefig("figures/v2_fig_subgroup_calibration.png", dpi=200); plt.close()
