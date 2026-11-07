@@ -3,7 +3,7 @@ from itertools import combinations
 from sklearn.metrics import roc_auc_score
 from pipeline import X_tr, X_te, y_tr, y_te, models, SEED
 
-N_BOOT, MARGIN = 1000, 0.005
+N_BOOT, MARGIN = 10000, 0.005
 ytr, yte = np.asarray(y_tr), np.asarray(y_te)
 
 BEST = {

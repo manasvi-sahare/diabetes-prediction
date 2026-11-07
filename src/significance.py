@@ -7,7 +7,7 @@ from pipeline import (X_tr, X_va, X_te, y_tr, y_va, y_te, models, SEED,
                       fit_calibrator, cv_brier)
 
 WEIGHTED = False      # True = same setup as your published table; plain-vs-weighted lives in pipeline.py
-N_BOOT   = 1000
+N_BOOT   = 10000
 MARGIN   = 0.005     # pre-declared equivalence margin on AUC
 NAMES    = ["LR", "RF", "XGB", "LGBM"]
 PAIRS    = list(combinations(NAMES, 2)) + [("XGB", "XGB_cal")]
